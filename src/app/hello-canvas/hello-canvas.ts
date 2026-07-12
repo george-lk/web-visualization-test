@@ -27,6 +27,9 @@ export class HelloCanvas implements AfterViewInit, OnDestroy {
   private frameCount = 0;
   private fpsWindowStart = 0;
   private readonly hueRotationSpeed = 0.05;
+  private readonly uiPadding = 16;
+  private elapsedMs = 0;
+  private lastFrameTimestamp: number | null = null;
   private readonly pauseHandle = { x: 0, y: 0, width: 110, height: 36 };
   private readonly onResize = () => {
     this.resizeCanvas();
@@ -86,8 +89,8 @@ export class HelloCanvas implements AfterViewInit, OnDestroy {
     canvas.width = Math.floor(width * dpr);
     canvas.height = Math.floor(height * dpr);
 
-    this.pauseHandle.x = Math.max(width - this.pauseHandle.width - 16, 16);
-    this.pauseHandle.y = 16;
+    this.pauseHandle.x = Math.max(width - this.pauseHandle.width - this.uiPadding, this.uiPadding);
+    this.pauseHandle.y = this.uiPadding;
   }
 
   private startLoop(): void {
@@ -109,21 +112,28 @@ export class HelloCanvas implements AfterViewInit, OnDestroy {
     this.isPaused = !this.isPaused;
     if (this.isPaused) {
       this.stopLoop();
+      this.lastFrameTimestamp = null;
       this.renderFrame(performance.now());
       return;
     }
     this.fpsWindowStart = performance.now();
     this.frameCount = 0;
+    this.lastFrameTimestamp = null;
     this.startLoop();
   }
 
   private readonly tick = (timestamp: number): void => {
-    this.frameHandle = null;
+    const previous = this.lastFrameTimestamp ?? timestamp;
+    this.elapsedMs += timestamp - previous;
+    this.lastFrameTimestamp = timestamp;
     this.renderFrame(timestamp);
 
-    if (!this.isPaused) {
-      this.startLoop();
+    if (this.isPaused) {
+      this.frameHandle = null;
+      return;
     }
+
+    this.frameHandle = requestAnimationFrame(this.tick);
   };
 
   private renderFrame(timestamp: number): void {
@@ -141,7 +151,7 @@ export class HelloCanvas implements AfterViewInit, OnDestroy {
     this.ctx.fillStyle = '#0b1220';
     this.ctx.fillRect(0, 0, width, height);
 
-    this.currentHue = (timestamp * this.hueRotationSpeed) % 360;
+    this.currentHue = (this.elapsedMs * this.hueRotationSpeed) % 360;
     this.ctx.fillStyle = `hsl(${this.currentHue} 95% 65%)`;
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
@@ -199,11 +209,11 @@ export class HelloCanvas implements AfterViewInit, OnDestroy {
     }
 
     this.ctx.fillStyle = 'rgba(15, 23, 42, 0.75)';
-    this.ctx.fillRect(16, 16, 90, 30);
+    this.ctx.fillRect(this.uiPadding, this.uiPadding, 90, 30);
     this.ctx.fillStyle = '#e2e8f0';
     this.ctx.textAlign = 'left';
     this.ctx.textBaseline = 'middle';
     this.ctx.font = '600 14px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
-    this.ctx.fillText(`FPS ${this.fps.toFixed(1)}`, 24, 31);
+    this.ctx.fillText(`FPS ${this.fps.toFixed(1)}`, this.uiPadding + 8, this.uiPadding + 15);
   }
 }
