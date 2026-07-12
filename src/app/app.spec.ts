@@ -14,15 +14,15 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render an empty app shell', async () => {
+  it('should render the hello canvas component', async () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    const content = compiled.querySelector('.content');
+    const canvasComponent = compiled.querySelector('app-hello-canvas');
+    const canvas = compiled.querySelector('canvas.canvas');
 
-    expect(compiled.querySelector('main.main')).not.toBeNull();
-    expect(content).not.toBeNull();
-    expect(content?.children.length).toBe(0);
+    expect(canvasComponent).not.toBeNull();
+    expect(canvas).not.toBeNull();
   });
 });

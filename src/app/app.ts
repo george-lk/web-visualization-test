@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { HelloCanvas } from './hello-canvas/hello-canvas';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [HelloCanvas],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
