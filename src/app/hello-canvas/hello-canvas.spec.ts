@@ -66,8 +66,11 @@ describe('HelloCanvas', () => {
     fixture.detectChanges();
     const canvas = fixture.nativeElement.querySelector('canvas.canvas') as HTMLCanvasElement;
     const initialRafCalls = requestAnimationFrameSpy.mock.calls.length;
-    const pauseHandleX = window.innerWidth - 20;
-    const pauseHandleY = 30;
+    const uiPadding = 16;
+    const pauseButtonWidth = 110;
+    const pauseButtonHeight = 36;
+    const pauseHandleX = window.innerWidth - uiPadding - pauseButtonWidth / 2;
+    const pauseHandleY = uiPadding + pauseButtonHeight / 2;
 
     canvas.dispatchEvent(
       new MouseEvent('click', { clientX: pauseHandleX, clientY: pauseHandleY, bubbles: true })

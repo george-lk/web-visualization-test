@@ -30,7 +30,7 @@ export class HelloCanvas implements AfterViewInit, OnDestroy {
   private readonly uiPadding = 16;
   private elapsedMs = 0;
   private lastFrameTimestamp: number | null = null;
-  private readonly pauseHandle = { x: 0, y: 0, width: 110, height: 36 };
+  private readonly pauseButtonBounds = { x: 0, y: 0, width: 110, height: 36 };
   private readonly onResize = () => {
     this.resizeCanvas();
     this.renderFrame(performance.now());
@@ -42,10 +42,10 @@ export class HelloCanvas implements AfterViewInit, OnDestroy {
     const y = event.clientY - rect.top;
 
     if (
-      x >= this.pauseHandle.x &&
-      x <= this.pauseHandle.x + this.pauseHandle.width &&
-      y >= this.pauseHandle.y &&
-      y <= this.pauseHandle.y + this.pauseHandle.height
+      x >= this.pauseButtonBounds.x &&
+      x <= this.pauseButtonBounds.x + this.pauseButtonBounds.width &&
+      y >= this.pauseButtonBounds.y &&
+      y <= this.pauseButtonBounds.y + this.pauseButtonBounds.height
     ) {
       this.togglePause();
     }
@@ -89,8 +89,15 @@ export class HelloCanvas implements AfterViewInit, OnDestroy {
     canvas.width = Math.floor(width * dpr);
     canvas.height = Math.floor(height * dpr);
 
-    this.pauseHandle.x = Math.max(width - this.pauseHandle.width - this.uiPadding, this.uiPadding);
-    this.pauseHandle.y = this.uiPadding;
+    this.positionPauseButton(width);
+  }
+
+  private positionPauseButton(width: number): void {
+    this.pauseButtonBounds.x = Math.max(
+      width - this.pauseButtonBounds.width - this.uiPadding,
+      this.uiPadding
+    );
+    this.pauseButtonBounds.y = this.uiPadding;
   }
 
   private startLoop(): void {
@@ -177,19 +184,19 @@ export class HelloCanvas implements AfterViewInit, OnDestroy {
 
     this.ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
     this.ctx.fillRect(
-      this.pauseHandle.x,
-      this.pauseHandle.y,
-      this.pauseHandle.width,
-      this.pauseHandle.height
+      this.pauseButtonBounds.x,
+      this.pauseButtonBounds.y,
+      this.pauseButtonBounds.width,
+      this.pauseButtonBounds.height
     );
 
     this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
     this.ctx.lineWidth = 1.5;
     this.ctx.strokeRect(
-      this.pauseHandle.x,
-      this.pauseHandle.y,
-      this.pauseHandle.width,
-      this.pauseHandle.height
+      this.pauseButtonBounds.x,
+      this.pauseButtonBounds.y,
+      this.pauseButtonBounds.width,
+      this.pauseButtonBounds.height
     );
 
     this.ctx.fillStyle = '#f8fafc';
@@ -198,8 +205,8 @@ export class HelloCanvas implements AfterViewInit, OnDestroy {
     this.ctx.font = '600 14px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
     this.ctx.fillText(
       this.isPaused ? 'Resume' : 'Pause',
-      this.pauseHandle.x + this.pauseHandle.width / 2,
-      this.pauseHandle.y + this.pauseHandle.height / 2
+      this.pauseButtonBounds.x + this.pauseButtonBounds.width / 2,
+      this.pauseButtonBounds.y + this.pauseButtonBounds.height / 2
     );
   }
 
