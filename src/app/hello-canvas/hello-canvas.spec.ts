@@ -28,9 +28,7 @@ describe('HelloCanvas', () => {
     requestAnimationFrameSpy = vi
       .spyOn(window, 'requestAnimationFrame')
       .mockImplementation(() => 7);
-    cancelAnimationFrameSpy = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {
-      return;
-    });
+    cancelAnimationFrameSpy = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {});
 
     await TestBed.configureTestingModule({
       imports: [HelloCanvas]
@@ -68,11 +66,17 @@ describe('HelloCanvas', () => {
     fixture.detectChanges();
     const canvas = fixture.nativeElement.querySelector('canvas.canvas') as HTMLCanvasElement;
     const initialRafCalls = requestAnimationFrameSpy.mock.calls.length;
+    const pauseHandleX = window.innerWidth - 20;
+    const pauseHandleY = 30;
 
-    canvas.dispatchEvent(new MouseEvent('click', { clientX: 950, clientY: 30, bubbles: true }));
+    canvas.dispatchEvent(
+      new MouseEvent('click', { clientX: pauseHandleX, clientY: pauseHandleY, bubbles: true })
+    );
     expect(cancelAnimationFrameSpy).toHaveBeenCalledWith(7);
 
-    canvas.dispatchEvent(new MouseEvent('click', { clientX: 950, clientY: 30, bubbles: true }));
+    canvas.dispatchEvent(
+      new MouseEvent('click', { clientX: pauseHandleX, clientY: pauseHandleY, bubbles: true })
+    );
     expect(requestAnimationFrameSpy.mock.calls.length).toBeGreaterThan(initialRafCalls);
   });
 });
