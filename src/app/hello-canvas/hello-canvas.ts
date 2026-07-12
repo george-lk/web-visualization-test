@@ -16,7 +16,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HelloCanvas implements AfterViewInit, OnDestroy {
-  @ViewChild('canvas', { static: true })
+  @ViewChild('canvas')
   private readonly canvasRef!: ElementRef<HTMLCanvasElement>;
 
   private ctx: CanvasRenderingContext2D | null = null;
@@ -51,11 +51,7 @@ export class HelloCanvas implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     const canvas = this.canvasRef.nativeElement;
-    try {
-      this.ctx = canvas.getContext('2d');
-    } catch {
-      this.ctx = null;
-    }
+    this.ctx = canvas.getContext('2d');
     if (!this.ctx) {
       return;
     }
@@ -70,9 +66,11 @@ export class HelloCanvas implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    const canvas = this.canvasRef.nativeElement;
-    canvas.removeEventListener('click', this.onClick);
-    window.removeEventListener('resize', this.onResize);
+    const canvas = this.canvasRef?.nativeElement;
+    if (canvas) {
+      canvas.removeEventListener('click', this.onClick);
+      window.removeEventListener('resize', this.onResize);
+    }
     this.stopLoop();
   }
 
