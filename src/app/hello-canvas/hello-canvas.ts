@@ -26,6 +26,7 @@ export class HelloCanvas implements AfterViewInit, OnDestroy {
   private fps = 0;
   private frameCount = 0;
   private fpsWindowStart = 0;
+  private readonly hueRotationSpeed = 0.05;
   private readonly pauseHandle = { x: 0, y: 0, width: 110, height: 36 };
   private readonly onResize = () => {
     this.resizeCanvas();
@@ -93,7 +94,7 @@ export class HelloCanvas implements AfterViewInit, OnDestroy {
     if (this.frameHandle !== null) {
       return;
     }
-    this.frameHandle = requestAnimationFrame((timestamp) => this.tick(timestamp));
+    this.frameHandle = requestAnimationFrame(this.tick);
   }
 
   private stopLoop(): void {
@@ -116,14 +117,14 @@ export class HelloCanvas implements AfterViewInit, OnDestroy {
     this.startLoop();
   }
 
-  private tick(timestamp: number): void {
+  private readonly tick = (timestamp: number): void => {
     this.frameHandle = null;
     this.renderFrame(timestamp);
 
     if (!this.isPaused) {
       this.startLoop();
     }
-  }
+  };
 
   private renderFrame(timestamp: number): void {
     if (!this.ctx) {
@@ -140,7 +141,7 @@ export class HelloCanvas implements AfterViewInit, OnDestroy {
     this.ctx.fillStyle = '#0b1220';
     this.ctx.fillRect(0, 0, width, height);
 
-    this.currentHue = (timestamp * 0.05) % 360;
+    this.currentHue = (timestamp * this.hueRotationSpeed) % 360;
     this.ctx.fillStyle = `hsl(${this.currentHue} 95% 65%)`;
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
