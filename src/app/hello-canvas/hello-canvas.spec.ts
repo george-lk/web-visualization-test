@@ -69,7 +69,8 @@ describe('HelloCanvas', () => {
     const uiPadding = 16;
     const pauseButtonWidth = 110;
     const pauseButtonHeight = 36;
-    const pauseHandleX = window.innerWidth - uiPadding - pauseButtonWidth / 2;
+    const pauseButtonLeft = window.innerWidth - pauseButtonWidth - uiPadding;
+    const pauseHandleX = pauseButtonLeft + pauseButtonWidth / 2;
     const pauseHandleY = uiPadding + pauseButtonHeight / 2;
 
     canvas.dispatchEvent(

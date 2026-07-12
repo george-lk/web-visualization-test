@@ -27,6 +27,7 @@ export class HelloCanvas implements AfterViewInit, OnDestroy {
   private frameCount = 0;
   private fpsWindowStart = 0;
   private readonly hueRotationSpeed = 0.05;
+  private readonly hueCycleMs = 360 / this.hueRotationSpeed;
   private readonly uiPadding = 16;
   private elapsedMs = 0;
   private lastFrameTimestamp: number | null = null;
@@ -131,7 +132,7 @@ export class HelloCanvas implements AfterViewInit, OnDestroy {
 
   private readonly tick = (timestamp: number): void => {
     const previous = this.lastFrameTimestamp ?? timestamp;
-    this.elapsedMs += timestamp - previous;
+    this.elapsedMs = (this.elapsedMs + (timestamp - previous)) % this.hueCycleMs;
     this.lastFrameTimestamp = timestamp;
     this.renderFrame(timestamp);
 
